@@ -1,0 +1,2 @@
+[console_scripts]
+freshbasket-churn = freshbasket_churn.cli:main

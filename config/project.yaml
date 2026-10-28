@@ -1,0 +1,77 @@
+seed: 42
+dataset_label: "SYNTHETIC DEMO ONLY — fictional data; not FreshBasket findings"
+
+paths:
+  profile: data/raw/fb_customer_profile_demo.csv
+  activity: data/raw/fb_monthly_activity_demo.csv
+  labels: data/raw/fb_churn_label_demo.csv
+  processed: data/processed
+  outputs: outputs
+
+# These are the analysis dates requested for this project. Monthly activity on
+# or after 2024-04-01 is never used as a model feature.
+label_window:
+  start: "2024-04-01"
+  end: "2024-06-30"
+
+schema:
+  # These mappings describe only the fictional demo files. Replace them using
+  # the real column names and labels after inspecting supplied source tables.
+  customer_id:
+    profile: customer_id
+    activity: customer_id
+    labels: customer_id
+  activity_month: activity_month
+  signup_date: signup_date
+  target: churn_status
+  # Explicitly map observed churn and non-churn values after inspecting the data.
+  label_values:
+    churn: [churned]
+    not_churn: [active]
+  # Profile columns used as model inputs; map each actual column to one category.
+  # Valid categories: demographics, membership, city, engagement, support,
+  # behavioral. Keep target-like or post-window fields out of these mappings.
+  profile_features:
+    age: demographics
+    gender: demographics
+    membership_tier: membership
+    city: city
+    email_open_rate: engagement
+    support_tickets_6m: support
+  # Monthly columns used as model inputs. Each mapping needs a category and an
+  # aggregation: sum, mean, max, min, or last.
+  monthly_features:
+    monthly_spend:
+      group: behavioral
+      aggregation: mean
+    transaction_count:
+      group: behavioral
+      aggregation: mean
+    app_sessions:
+      group: engagement
+      aggregation: mean
+    rewards_redeemed:
+      group: behavioral
+      aggregation: sum
+    support_tickets:
+      group: support
+      aggregation: sum
+  # Numeric columns checked for negative values as potentially invalid spend.
+  spend_columns: [monthly_spend]
+  # Numeric transaction-count column checked for zero values.
+  transaction_count_column: transaction_count
+  # Columns where casing consistency is worth checking.
+  categorical_columns: [gender, membership_tier, city]
+  # Identifiers or outcome-derived columns that must never become model features.
+  forbidden_feature_columns: []
+
+validation:
+  # Number of latest distinct signup cohorts reserved for temporal validation.
+  holdout_latest_cohorts: 1
+
+retention_scenario:
+  # Explicit assumptions, not estimated causal effects.
+  contact_fraction: 0.10
+  assumed_absolute_retention_lift: 0.10
+  contact_cost_per_customer: 0.0
+  assumed_value_per_retained_customer: 0.0

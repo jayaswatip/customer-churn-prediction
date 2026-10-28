@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freshbasket-churn"
+version = "0.1.0"
+description = "Reproducible customer churn analysis for FreshBasket Retail Loyalty Program"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "joblib>=1.3",
+  "matplotlib>=3.7",
+  "numpy>=1.24",
+  "openpyxl>=3.1",
+  "pandas>=2.0",
+  "python-pptx>=0.6.23",
+  "pyyaml>=6.0",
+  "scikit-learn>=1.3",
+  "seaborn>=0.13",
+  "streamlit>=1.36",
+  "tabulate>=0.9",
+  "xlrd>=2.0.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+freshbasket-churn = "freshbasket_churn.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
